@@ -10,6 +10,7 @@
 #define basic_ds_hpp
 
 #include <stdio.h>
+#include <vector>
 
 struct TreeNode {
     int val;
@@ -21,6 +22,19 @@ struct ListNode {
     int val;
     ListNode *next;
     ListNode(int x) : val(x), next(NULL) {}
+};
+
+struct UndirectedGraphNode {
+    int label;
+    std::vector<UndirectedGraphNode *> neighbors;
+    UndirectedGraphNode(int x) : label(x) {};
+};
+
+struct Interval {
+    int start;
+    int end;
+    Interval() : start(0), end(0) {}
+    Interval(int s, int e) : start(s), end(e) {}
 };
 
 #endif /* basic_ds_hpp */
