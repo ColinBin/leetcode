@@ -11,6 +11,16 @@
 
 #include <stdio.h>
 #include <vector>
+#include <string>
+#include <algorithm>
+#include <utility>
+#include <cctype>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include <queue>
+#include <deque>
 
 struct TreeNode {
     int val;

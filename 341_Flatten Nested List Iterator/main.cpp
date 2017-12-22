@@ -14,7 +14,7 @@ using namespace std;
 
 class NestedIterator {
 public:
-    using iterator = vector<NestedInteger>::iterator;
+    using iterator = vector<const NestedInteger>::iterator;
     NestedIterator(vector<NestedInteger> &nestedList) {
         stk.push(make_pair(nestedList.begin(), nestedList.end()));
     }
@@ -35,7 +35,7 @@ public:
                     return true;
                 } else {
                     // special attention!
-                    auto &newChildList = iter->getList();
+                    const vector<NestedInteger> &newChildList = iter->getList();
                     ++(stk.top().first);
                     stk.push(make_pair(newChildList.begin(), newChildList.end()));
                 }
