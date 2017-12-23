@@ -21,6 +21,7 @@
 #include <unordered_set>
 #include <queue>
 #include <deque>
+#include <stack>
 
 struct TreeNode {
     int val;
