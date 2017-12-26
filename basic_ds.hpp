@@ -9,7 +9,9 @@
 #ifndef basic_ds_hpp
 #define basic_ds_hpp
 
-#include <stdio.h>
+#include <iostream>
+#include <sstream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <algorithm>
