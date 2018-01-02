@@ -24,6 +24,7 @@
 #include <queue>
 #include <deque>
 #include <stack>
+#include <numeric>
 
 struct TreeNode {
     int val;
