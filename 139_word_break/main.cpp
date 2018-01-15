@@ -7,9 +7,7 @@
 //
 
 #include <iostream>
-#include <string>
-#include <set>
-#include <vector>
+#include "../basic_ds.hpp"
 
 using namespace std;
 
@@ -22,6 +20,34 @@ bool wordBreak(string s, vector<string>& wordDict) {
     vector<int> memo(s.length(), -1);
     // DFS
     return dfs(set<string> (wordDict.begin(), wordDict.end()), memo, s, 0);
+}
+
+bool wordBreakBFS(string s, vector<string>& wordDict) {
+    int sLen = s.length();
+    unordered_set<string> dict;
+    int maxLen = 0;
+    for(const string &word : wordDict) {
+        dict.insert(word);
+        maxLen = max(maxLen, int(word.length()));
+    }
+    unordered_set<int> inQ;
+    inQ.insert(0);
+    queue<int> q;
+    q.push(0);
+    while(!q.empty()) {
+        int current = q.front();
+        q.pop();
+        if(current == sLen) return true;
+        for(int i = current + 1; i <= sLen && i - current <= maxLen; ++i) {
+            if(inQ.find(i) != inQ.end()) continue;
+            string currStr = s.substr(current, i - current);
+            if(dict.find(currStr) != dict.end()) {
+                q.push(i);
+                inQ.insert(i);
+            }
+        }
+    }
+    return false;
 }
 bool dfs(const set<string> &wordDict, vector<int> &memo, const string &target, int start) {
     if(start == target.length()){
@@ -67,8 +93,8 @@ bool wordBreakDP(string s, vector<string>& wordDict) {
 }
 
 int main(int argc, const char * argv[]) {
-    string target = "leetcode";
-    vector<string> wordDict = {"leet", "code"};
-    cout << wordBreakDP(target, wordDict) << endl;
+    string target = "abcd";
+    vector<string> wordDict = {"a","abc","b","cd"};
+    cout << wordBreakBFS(target, wordDict) << endl;
     return 0;
 }
