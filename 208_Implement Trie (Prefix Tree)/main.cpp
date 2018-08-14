@@ -6,82 +6,94 @@
 //  Copyright © 2017 Colin. All rights reserved.
 //
 
-#include <iostream>
-#include <string>
-#include <unordered_map>
+#include "basic_ds.hpp"
 
 using namespace std;
 
 class Trie {
+private:
+    class TrieNode{
+    public:
+        vector<TrieNode *> children;
+        bool isLeaf;
+        int refCount;
+        TrieNode() {
+            children = vector<TrieNode *>(26, nullptr);
+            isLeaf = false;
+            refCount = 0;
+        }
+    };
+    TrieNode *root;
+    
 public:
     /** Initialize your data structure here. */
     Trie() {
-        root = new TrieNode(false);
+        root = new TrieNode();
+        ++root->refCount;
     }
     
     /** Inserts a word into the trie. */
     void insert(string word) {
-        TrieNode *currentNode = root;
-        for(const char ch : word) {
-            if(!currentNode->containsChild(ch)) {
-                currentNode->insert(ch);
+        auto iter = root;
+        ++root->refCount;
+        for(const char c : word) {
+            int index = c - 'a';
+            if(iter->children[index] == nullptr) {
+                iter->children[index] = new TrieNode();
             }
-            currentNode = currentNode->getChild(ch);
+            iter = iter->children[index];
+            ++iter->refCount;
         }
-        currentNode->setComplete(true);
+        iter->isLeaf = true;
+        return ;
     }
     
     /** Returns if the word is in the trie. */
     bool search(string word) {
-        TrieNode *currentNode = root;
-        for(const char ch : word) {
-            if(!currentNode->containsChild(ch))
-                return false;
-            currentNode = currentNode->getChild(ch);
+        auto iter = root;
+        for(const char c : word) {
+            int index = c - 'a';
+            if(iter->children[index] == nullptr) return false;
+            iter = iter->children[index];
         }
-        return currentNode->checkComplete();
+        return iter->isLeaf;
     }
     
     /** Returns if there is any word in the trie that starts with the given prefix. */
     bool startsWith(string prefix) {
-        TrieNode *currentNode = root;
-        for(const char ch : prefix) {
-            if(!currentNode->containsChild(ch)) {
-                return false;
-            }
-            currentNode = currentNode->getChild(ch);
+        auto iter = root;
+        for(const char c : prefix) {
+            int index = c - 'a';
+            if(iter->children[index] == nullptr) return false;
+            iter = iter->children[index];
         }
         return true;
     }
     
-
-private:
-    class TrieNode {
-    public:
-        TrieNode(bool complete = false): isComplete(complete) {  }
-        void insert(char newChar) {
-            childNodes[newChar] = new TrieNode(false);
-            return;
+    void deleteWord(string word) {
+        if(!search(word)) return ;
+        helper(word, 0, root);
+        return ;
+    }
+    
+    void helper(const string &word, int index, TrieNode *curr) {
+        if(index == word.length()) {
+            curr->isLeaf = false;
+            --curr->refCount;
+            return ;
         }
-        bool containsChild(char targetChar) {
-            return childNodes.find(targetChar) != childNodes.end();
+        int d = word[index] - 'a';
+        TrieNode *child = curr->children[d];
+        helper(word, index + 1, child);
+        if(child->refCount == 0) {
+            cout << "delete Node for " << word[index] << endl;
+            delete child;
         }
-        TrieNode *getChild(char targetChar) {
-            return childNodes[targetChar];
-        }
-        void setComplete(bool complete) {
-            isComplete = complete;
-        }
-        bool checkComplete() {
-            return isComplete;
-        }
-    private:
-        unordered_map<char, TrieNode *> childNodes;
-        bool isComplete;
-    };
-    TrieNode *root;
+        --curr->refCount;
+        return ;
+    }
+    
 };
-
 int main(int argc, const char * argv[]) {
     Trie trie = Trie();
     trie.insert("abcd");
@@ -92,5 +104,8 @@ int main(int argc, const char * argv[]) {
     cout << trie.search("bk") << endl;
     cout << trie.startsWith("ak") << endl;
     cout << trie.search("abdc") << endl;
+    trie.deleteWord("abd");
+    trie.deleteWord("bk");
+    trie.deleteWord("abcd");
     return 0;
 }
